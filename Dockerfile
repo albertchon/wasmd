@@ -15,8 +15,12 @@ WORKDIR /code
 COPY . /code/
 
 # See https://github.com/CosmWasm/wasmvm/releases
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta7/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
-RUN sha256sum /lib/libwasmvm_muslc.a | grep d0152067a5609bfdfb3f0d5d6c0f2760f79d5f2cd7fd8513cafa9932d22eb350
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta8/libwasmvm_muslc.a /lib/libwasmvm_muslc.x86_64.a
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta8/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
+RUN sha256sum /lib/libwasmvm_muslc.x86_64.a | grep 903ab4715ba7c7586dfee9025a3c5bb17cd090329faa15ef91dcb01cc162bf1e
+RUN sha256sum /lib/libwasmvm_muslc.aarch64.a | grep c6ad75bd3cd29115c714ec909ae080a0f1665d3407f11972c1a6d72b5cc48cc3
+# Copy the library you want to the final location that will be used by the linker flag `-lwasmvm_muslc`
+RUN cp /lib/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.a
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
 RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build
